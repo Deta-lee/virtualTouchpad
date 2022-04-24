@@ -69,9 +69,9 @@ namespace virtualTouchpad
         [DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);//设置此窗体为活动窗体
 
-        const int PROPORTION_ALL = 5;//占据屏幕1/5
-        const int PROPORTION_BUTTON = 4;//占据pointNowLoc屏幕1/4，黄金比例0.618
-        const double goldenRatio = 0.618;
+        const int PROPORTION_ALL = 1;//占据屏幕1/5
+        // const int PROPORTION_BUTTON = 4;//占据pointNowLoc屏幕1/4，黄金比例0.618
+        // const double goldenRatio = 0.618;
 
         Rectangle ScreenArea;
         Rectangle recTouchBoard;
@@ -86,7 +86,7 @@ namespace virtualTouchpad
         Point pointLastLoc = new Point(0, 0);
 
         //这一组是虚拟触摸板手指的上一时刻和此时刻位置
-        Point pointTouchNowLoc;
+        Point pointTouchNowLoc = new Point(0, 0);
         Point pointTouchLastLoc = new Point(0, 0);
         Thread oGetArgThread;
         //设置计时器来判断状态
@@ -118,30 +118,31 @@ namespace virtualTouchpad
         private void mainTouchpad_paint(object sender, PaintEventArgs e)
         {
             Color myColor;
-            myColor = Color.FromArgb(224, 224, 224);
+            myColor = Color.FromArgb(255);
             Brush bsh = new SolidBrush(myColor);
             Graphics g = e.Graphics;
-            g.FillRectangle(bsh, recBtnLeft);
-
-            //填充左，右按钮
-            myColor = Color.FromArgb(224, 224, 224);
-            // When BtnDown myColor <- Color.FromArgb(192, 192, 192)
-            bsh = new SolidBrush(myColor);
-            g.FillRectangle(bsh, recBtnRight);
-
-            myColor = Color.FromArgb(224, 224, 224);
-            // When BtnDown myColor <- Color.FromArgb(192, 192, 192)
-            bsh = new SolidBrush(myColor);
             g.FillRectangle(bsh, recTouchBoard);
+            // g.FillRectangle(bsh, recBtnLeft);
 
-            //填充分割线段
-            myColor = Color.FromArgb(128, 128, 128);
-            bsh = new SolidBrush(myColor);
-            g.FillRectangle(bsh, recMainSeperator);
+            // //填充左，右按钮
+            // myColor = Color.FromArgb(224, 224, 224);
+            // // When BtnDown myColor <- Color.FromArgb(192, 192, 192)
+            // bsh = new SolidBrush(myColor);
+            // g.FillRectangle(bsh, recBtnRight);
 
-            myColor = Color.FromArgb(128, 128, 128);
-            bsh = new SolidBrush(myColor);
-            g.FillRectangle(bsh, recBtnSeperator);
+            // myColor = Color.FromArgb(224, 224, 224);
+            // // When BtnDown myColor <- Color.FromArgb(192, 192, 192)
+            // bsh = new SolidBrush(myColor);
+            // g.FillRectangle(bsh, recTouchBoard);
+
+            // //填充分割线段
+            // myColor = Color.FromArgb(128, 128, 128);
+            // bsh = new SolidBrush(myColor);
+            // g.FillRectangle(bsh, recMainSeperator);
+
+            // myColor = Color.FromArgb(128, 128, 128);
+            // bsh = new SolidBrush(myColor);
+            // g.FillRectangle(bsh, recBtnSeperator);
 
         }
 
@@ -166,24 +167,24 @@ namespace virtualTouchpad
 
         private void OnTouchDownHandler(object sender, WMTouchEventArgs e)
         {
+            //左键
+            // if (isInRectangle(new Point(e.LocationX, e.LocationY), recBtnLeft))
+            // {
+            //     //label1.Text = (String.Format("down: {0} {1}", e.LocationX,e.LocationY));
+            //     IntPtr hwnd = WindowFromPoint(new Point(pointNowLoc.X, pointNowLoc.Y));
 
-            if (isInRectangle(new Point(e.LocationX, e.LocationY), recBtnLeft))
-            {
-                //label1.Text = (String.Format("down: {0} {1}", e.LocationX,e.LocationY));
-                IntPtr hwnd = WindowFromPoint(new Point(pointNowLoc.X, pointNowLoc.Y));
+            //     SetForegroundWindow(hwnd);
 
-                SetForegroundWindow(hwnd);
+            //     mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP | MOUSEEVENTF_ABSOLUTE,
+            //         pointNowLoc.X, pointNowLoc.Y, 0, (int)hwnd);
 
-                mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP | MOUSEEVENTF_ABSOLUTE,
-                    pointNowLoc.X, pointNowLoc.Y, 0, (int)hwnd);
-
-            }
-
-            if (isInRectangle(new Point(e.LocationX, e.LocationY), recBtnRight))
-            {
-                this.Close();
-                oGetArgThread.Abort();
-            }
+            // }
+            //右键
+            // if (isInRectangle(new Point(e.LocationX, e.LocationY), recBtnRight))
+            // {
+            //     this.Close();
+            //     oGetArgThread.Abort();
+            // }
 
             if (isInRectangle(new Point(e.LocationX, e.LocationY), recTouchBoard))
             {
@@ -201,14 +202,14 @@ namespace virtualTouchpad
                 pointLastLoc = pointNowLoc;
                 pointTouchLastLoc = new Point(0, 0);
             }
-            else if (isInRectangle(new Point(e.LocationX, e.LocationY), recBtnLeft))
-            {
-                IntPtr hwnd = WindowFromPoint(new Point(pointNowLoc.X, pointNowLoc.Y));
+            // else if (isInRectangle(new Point(e.LocationX, e.LocationY), recBtnLeft))
+            // {
+            //     IntPtr hwnd = WindowFromPoint(new Point(pointNowLoc.X, pointNowLoc.Y));
 
-                SetForegroundWindow(hwnd);
-                mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP,
-                        0, 0, 0, 0);
-            }
+            //     SetForegroundWindow(hwnd);
+            //     mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP,
+            //             0, 0, 0, 0);
+            // }
 
 
         }
@@ -298,7 +299,8 @@ namespace virtualTouchpad
 
             this.StartPosition = FormStartPosition.Manual;
             this.TopMost = true;
-            this.Opacity = 0.9;
+            // 透明度
+            this.Opacity = 0.1;
             this.Hide();
 
             ScreenArea = System.Windows.Forms.Screen.GetBounds(this);
@@ -308,8 +310,8 @@ namespace virtualTouchpad
                     0
                 ),
                 new Size(
-                    ScreenArea.Width / PROPORTION_ALL,
-                    (int)(ScreenArea.Width * goldenRatio / PROPORTION_ALL)
+                    ScreenArea.Width / 2,
+                    ScreenArea.Height / PROPORTION_ALL
                 )
             );
             //设置鼠标从触摸板左上角
@@ -365,9 +367,9 @@ namespace virtualTouchpad
             );
 
             //窗体的位置由Location属性决定
-            this.Location = (Point)new Size(ScreenArea.Width - recTouchBoard.Width, ScreenArea.Height - recTouchBoard.Height - 40);
+            this.Location = (Point)new Size(ScreenArea.Width - recTouchBoard.Width, ScreenArea.Height - recTouchBoard.Height);
             this.Size = new Size(recTouchBoard.Width, recTouchBoard.Height);
-            recTouchBoard.Height = (recTouchBoard.Height * 3) / 4;
+            // recTouchBoard.Height = (recTouchBoard.Height * 3) / 4;
             this.Show();
         }
     }
